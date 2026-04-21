@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     const response = await client.messages.create({
       model: "claude-sonnet-4-5-20250929",
-      max_tokens: 4096,
+      max_tokens: 2048,
       system: SYSTEM_PROMPT + rulesContext,
       messages: messages.map((m: { role: string; content: string }) => ({
         role: m.role as "user" | "assistant",

@@ -81,12 +81,20 @@ export function Chatbot({ language, onArticleClick }: ChatbotProps) {
         body: JSON.stringify({ messages: newMessages, language }),
       })
 
+      if (!res.ok) {
+        const errorMsg = res.status === 504
+          ? (language === "ar" ? "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى." : "Request timed out. Please try again.")
+          : (language === "ar" ? "حدث خطأ. يرجى المحاولة مرة أخرى." : "Sorry, an error occurred. Please try again.")
+        setMessages([...newMessages, { role: "assistant", content: errorMsg }])
+        return
+      }
+
       const data = await res.json()
 
       if (data.error) {
         setMessages([
           ...newMessages,
-          { role: "assistant", content: "Sorry, an error occurred. Please try again." },
+          { role: "assistant", content: language === "ar" ? "حدث خطأ. يرجى المحاولة مرة أخرى." : "Sorry, an error occurred. Please try again." },
         ])
       } else {
         setMessages([...newMessages, { role: "assistant", content: data.content }])
