@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { trackLanguageToggle } from "@/lib/posthog"
 
 export type Language = "en" | "ar"
 
@@ -16,7 +17,11 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Language>("en")
   const isRtl = lang === "ar"
-  const toggleLang = useCallback(() => setLang((l) => (l === "en" ? "ar" : "en")), [])
+  const toggleLang = useCallback(() => setLang((l) => {
+    const next = l === "en" ? "ar" : "en"
+    trackLanguageToggle(next)
+    return next
+  }), [])
 
   return (
     <LanguageContext.Provider value={{ lang, isRtl, toggleLang, setLang }}>
