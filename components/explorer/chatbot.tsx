@@ -14,6 +14,7 @@ interface Message {
 interface ChatbotProps {
   language: "en" | "ar"
   onArticleClick?: ArticleClickHandler
+  fullHeight?: boolean
 }
 
 const SUGGESTIONS_EN = [
@@ -42,7 +43,7 @@ const WELCOME_AR = {
     "اطرح أي سؤال حول ميثاق الإمارات للخدمات الحكومية. يمكنني مساعدتك في فهم مواد محددة أو العثور على المتطلبات ذات الصلة أو شرح معايير الامتثال.",
 }
 
-export function Chatbot({ language, onArticleClick }: ChatbotProps) {
+export function Chatbot({ language, onArticleClick, fullHeight }: ChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
@@ -129,7 +130,10 @@ export function Chatbot({ language, onArticleClick }: ChatbotProps) {
 
   return (
     <div
-      className="flex flex-col h-[600px] bg-white rounded-[18px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+      className={cn(
+        "flex flex-col bg-white rounded-[18px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.06)]",
+        fullHeight ? "flex-1 min-h-0" : "h-[600px]"
+      )}
       style={{ fontFamily: "'Roboto', 'Noto Kufi Arabic', sans-serif" }}
     >
       {/* Messages area */}

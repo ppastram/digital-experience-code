@@ -1,37 +1,49 @@
 "use client"
 
-import { useState, useMemo, useCallback, useEffect, useRef } from "react"
-import { Search, BookOpen, Sparkles, ArrowLeft, ArrowRight } from "lucide-react"
+import { useState, useMemo, useCallback, useEffect, useRef, Suspense } from "react"
+import { Search, BookOpen, ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { getRules, getCategories, type UICategory } from "@/lib/emirates-code-data"
 import { ArticleCard } from "@/components/explorer/article-card"
 import { CategoryIcon } from "@/components/explorer/category-icons"
-import { Chatbot } from "@/components/explorer/chatbot"
 import { useLanguage } from "@/lib/language-context"
-
-type Tab = "explorer" | "chatbot"
+import Link from "next/link"
 
 export default function ExplorerPage() {
-  const [tab, setTab] = useState<Tab>("explorer")
+  return (
+    <Suspense fallback={<div className="flex-1 bg-page-bg" />}>
+      <ExplorerContent />
+    </Suspense>
+  )
+}
+
+function ExplorerContent() {
   const { lang: language } = useLanguage()
-  const [search, setSearch] = useState("")
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialQ = searchParams.get("q") || ""
+
+  const [search, setSearch] = useState(initialQ)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [expandedArticle, setExpandedArticle] = useState<string | null>(null)
+  const [expandedArticle, setExpandedArticle] = useState<string | null>(initialQ || null)
   const [titleVisible, setTitleVisible] = useState(false)
   const titleRef = useRef<HTMLDivElement>(null)
   const isRtl = language === "ar"
 
-  const handleArticleClick = useCallback((articleId: string) => {
-    setTab("explorer")
-    setSelectedCategory(null)
-    setSearch(articleId)
-    setExpandedArticle(articleId)
-  }, [])
+  // Sync URL param changes
+  useEffect(() => {
+    const q = searchParams.get("q") || ""
+    if (q && q !== search) {
+      setSearch(q)
+      setSelectedCategory(null)
+      setExpandedArticle(q)
+    }
+  }, [searchParams])
 
   const rules = useMemo(() => getRules(), [])
   const categories = useMemo(() => getCategories(), [])
 
-  // Whether to show articles (user picked a category or typed a search)
   const isFiltering = selectedCategory !== null || search.trim() !== ""
 
   const filteredRules = useMemo(() => {
@@ -60,7 +72,6 @@ export default function ExplorerPage() {
     return result
   }, [rules, search, selectedCategory, isFiltering])
 
-  // Observe title for gold underline animation
   useEffect(() => {
     if (!titleRef.current) return
     const observer = new IntersectionObserver(
@@ -90,11 +101,11 @@ export default function ExplorerPage() {
 
   return (
     <div
-      className="-m-3 md:-m-6 p-5 md:p-8 min-h-full"
-      style={{ background: "#F5F6F6", fontFamily: "'Roboto', 'Noto Kufi Arabic', sans-serif" }}
+      className="bg-page-bg p-5 md:p-8 flex-1 overflow-auto"
+      style={{ fontFamily: "'Roboto', 'Noto Kufi Arabic', sans-serif" }}
     >
       <div className="max-w-5xl mx-auto space-y-8">
-        {/* Header with title and tab switcher */}
+        {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div ref={titleRef}>
             <h1
@@ -103,7 +114,6 @@ export default function ExplorerPage() {
               dir={isRtl ? "rtl" : "ltr"}
             >
               {isRtl ? "ميثاق الإمارات" : "Emirates Code"}
-              {/* Animated gold underline */}
               <span
                 className={cn(
                   "absolute bottom-0 left-0 right-0 h-[3px] bg-brand rounded-full",
@@ -119,191 +129,158 @@ export default function ExplorerPage() {
             </p>
           </div>
 
-          {/* Tab switcher — pill buttons */}
-          <div className="flex bg-cream rounded-full p-1 shadow-sm">
-            <button
-              onClick={() => setTab("explorer")}
-              className={cn(
-                "flex items-center gap-2 px-5 py-2 text-sm font-semibold",
-                "rounded-[1.5rem] hover:rounded-[0.5rem]",
-                "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]",
-                tab === "explorer"
-                  ? "bg-brand text-brand-dark shadow-md"
-                  : "text-text-primary/40 hover:text-text-primary/70"
-              )}
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              <BookOpen size={15} />
-              {isRtl ? "المستكشف" : "Explorer"}
-            </button>
-            <button
-              onClick={() => setTab("chatbot")}
-              className={cn(
-                "flex items-center gap-2 px-5 py-2 text-sm font-semibold",
-                "rounded-[1.5rem] hover:rounded-[0.5rem]",
-                "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]",
-                tab === "chatbot"
-                  ? "bg-brand text-brand-dark shadow-md"
-                  : "text-text-primary/40 hover:text-text-primary/70"
-              )}
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              <Sparkles size={15} />
-              {isRtl ? "اسأل الميثاق" : "Ask the Code"}
-            </button>
-          </div>
+          <Link
+            href="/chat"
+            className={cn(
+              "flex items-center gap-2 px-5 py-2 text-sm font-semibold",
+              "rounded-[1.5rem] hover:rounded-[0.5rem]",
+              "bg-cream text-text-primary/50 hover:bg-brand/10 hover:text-text-primary/80",
+              "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]"
+            )}
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            <Sparkles size={15} />
+            {isRtl ? "اسأل الميثاق" : "Ask the Code"}
+          </Link>
         </div>
 
-        {tab === "explorer" ? (
-          <div className="space-y-6">
-            {/* Search bar — always visible */}
-            <div className="relative max-w-2xl mx-auto">
-              <Search
-                size={18}
-                className={cn(
-                  "absolute top-1/2 -translate-y-1/2 text-neutral-gray",
-                  isRtl ? "right-5" : "left-5"
-                )}
-              />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={
-                  isRtl
-                    ? "ابحث عن المواد بالكلمة المفتاحية أو رقم المادة أو الوصف..."
-                    : "Search articles by keyword, code number, or description..."
-                }
-                dir={isRtl ? "rtl" : "ltr"}
-                className={cn(
-                  "w-full rounded-[18px] py-3.5 text-sm bg-white border-0",
-                  "shadow-[0_2px_8px_rgba(0,0,0,0.06)]",
-                  "focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,191,54,0.3),0_2px_8px_rgba(0,0,0,0.06)]",
-                  "placeholder:text-neutral-gray text-text-primary",
-                  "transition-shadow duration-300",
-                  isRtl ? "pr-12 pl-5" : "pl-12 pr-5"
-                )}
-              />
+        {/* Search bar */}
+        <div className="relative max-w-2xl mx-auto">
+          <Search
+            size={18}
+            className={cn(
+              "absolute top-1/2 -translate-y-1/2 text-neutral-gray",
+              isRtl ? "right-5" : "left-5"
+            )}
+          />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={
+              isRtl
+                ? "ابحث عن المواد بالكلمة المفتاحية أو رقم المادة أو الوصف..."
+                : "Search articles by keyword, code number, or description..."
+            }
+            dir={isRtl ? "rtl" : "ltr"}
+            className={cn(
+              "w-full rounded-[18px] py-3.5 text-sm bg-white border-0",
+              "shadow-[0_2px_8px_rgba(0,0,0,0.06)]",
+              "focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,191,54,0.3),0_2px_8px_rgba(0,0,0,0.06)]",
+              "placeholder:text-neutral-gray text-text-primary",
+              "transition-shadow duration-300",
+              isRtl ? "pr-12 pl-5" : "pl-12 pr-5"
+            )}
+          />
+        </div>
+
+        {!isFiltering ? (
+          <>
+            <p
+              className="text-center text-sm text-text-primary/40"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
+              {isRtl
+                ? `${rules.length} مادة عبر ${categories.length} فئة — اختر فئة للاستكشاف`
+                : `${rules.length} articles across ${categories.length} categories — pick one to explore`}
+            </p>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {categories.map((cat, idx) => (
+                <CategoryCard
+                  key={cat.name}
+                  category={cat}
+                  language={language}
+                  index={idx}
+                  onClick={() => handleCategorySelect(cat.name)}
+                />
+              ))}
             </div>
 
-            {!isFiltering ? (
-              /* ============ CATEGORY GRID — initial view ============ */
-              <>
-                <p
-                  className="text-center text-sm text-text-primary/40"
-                  dir={isRtl ? "rtl" : "ltr"}
-                >
-                  {isRtl
-                    ? `${rules.length} مادة عبر ${categories.length} فئة — اختر فئة للاستكشاف`
-                    : `${rules.length} articles across ${categories.length} categories — pick one to explore`}
-                </p>
-
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {categories.map((cat, idx) => (
-                    <CategoryCard
-                      key={cat.name}
-                      category={cat}
-                      language={language}
-                      index={idx}
-                      onClick={() => handleCategorySelect(cat.name)}
-                    />
-                  ))}
-                </div>
-
-                {/* Footer stats */}
-                <div className="flex items-center justify-center gap-6 py-5 border-t border-neutral-gray/30 text-xs text-text-primary/30">
-                  <span>{rules.length} Total Articles</span>
-                  <span className="text-brand">|</span>
-                  <span>{categories.length} Categories</span>
-                </div>
-              </>
-            ) : (
-              /* ============ ARTICLE LIST — after selecting category or searching ============ */
-              <>
-                {/* Back button + results count */}
-                <div className="flex items-center justify-between" dir={isRtl ? "rtl" : "ltr"}>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handleBackToCategories}
-                      className={cn(
-                        "flex items-center gap-1.5 text-sm font-medium text-text-primary/50",
-                        "bg-cream px-4 py-2",
-                        "rounded-[1.5rem] hover:rounded-[0.5rem]",
-                        "hover:bg-brand/10 hover:text-text-primary",
-                        "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]"
-                      )}
-                    >
-                      {isRtl ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
-                      {isRtl ? "كل الفئات" : "All Categories"}
-                    </button>
-                  </div>
-                  <p className="text-sm text-text-primary/40">
-                    <span className="font-semibold text-text-primary/70">{filteredRules.length}</span>{" "}
-                    {isRtl ? "مادة" : "articles"}
-                    {selectedCategory && (
-                      <span>
-                        {" "}{isRtl ? "في" : "in"}{" "}
-                        <span className="font-semibold text-brand-dark">
-                          {isRtl
-                            ? categories.find((c) => c.name === selectedCategory)?.name_ar ?? selectedCategory
-                            : selectedCategory}
-                        </span>
-                      </span>
-                    )}
-                    {search && (
-                      <span>
-                        {" "}{isRtl ? "مطابقة لـ" : "matching"} &ldquo;
-                        <span className="font-semibold text-text-primary/70">{search}</span>&rdquo;
-                      </span>
-                    )}
-                  </p>
-                </div>
-
-                {/* Article cards */}
-                {filteredRules.length > 0 ? (
-                  <div className="grid gap-4">
-                    {filteredRules.map((rule) => (
-                      <ArticleCard
-                        key={rule.id}
-                        rule={rule}
-                        language={language}
-                        forceExpanded={expandedArticle === rule.id}
-                        onExpand={() => setExpandedArticle(null)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16 text-text-primary/30">
-                    <BookOpen size={36} className="mx-auto mb-4 opacity-40" />
-                    <p className="text-sm mb-3">
-                      {isRtl
-                        ? "لم يتم العثور على مواد تطابق معاييرك."
-                        : "No articles found matching your criteria."}
-                    </p>
-                    <button
-                      onClick={handleBackToCategories}
-                      className={cn(
-                        "text-sm font-medium text-brand-dark bg-brand/20 px-5 py-2",
-                        "rounded-[1.5rem] hover:rounded-[0.5rem] hover:bg-brand/30",
-                        "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]"
-                      )}
-                    >
-                      {isRtl ? "العودة للفئات" : "Back to categories"}
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+            <div className="flex items-center justify-center gap-6 py-5 border-t border-neutral-gray/30 text-xs text-text-primary/30">
+              <span>{rules.length} Total Articles</span>
+              <span className="text-brand">|</span>
+              <span>{categories.length} Categories</span>
+            </div>
+          </>
         ) : (
-          <Chatbot language={language} onArticleClick={handleArticleClick} />
+          <>
+            <div className="flex items-center justify-between" dir={isRtl ? "rtl" : "ltr"}>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleBackToCategories}
+                  className={cn(
+                    "flex items-center gap-1.5 text-sm font-medium text-text-primary/50",
+                    "bg-cream px-4 py-2",
+                    "rounded-[1.5rem] hover:rounded-[0.5rem]",
+                    "hover:bg-brand/10 hover:text-text-primary",
+                    "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]"
+                  )}
+                >
+                  {isRtl ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
+                  {isRtl ? "كل الفئات" : "All Categories"}
+                </button>
+              </div>
+              <p className="text-sm text-text-primary/40">
+                <span className="font-semibold text-text-primary/70">{filteredRules.length}</span>{" "}
+                {isRtl ? "مادة" : "articles"}
+                {selectedCategory && (
+                  <span>
+                    {" "}{isRtl ? "في" : "in"}{" "}
+                    <span className="font-semibold text-brand-dark">
+                      {isRtl
+                        ? categories.find((c) => c.name === selectedCategory)?.name_ar ?? selectedCategory
+                        : selectedCategory}
+                    </span>
+                  </span>
+                )}
+                {search && (
+                  <span>
+                    {" "}{isRtl ? "مطابقة لـ" : "matching"} &ldquo;
+                    <span className="font-semibold text-text-primary/70">{search}</span>&rdquo;
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {filteredRules.length > 0 ? (
+              <div className="grid gap-4">
+                {filteredRules.map((rule) => (
+                  <ArticleCard
+                    key={rule.id}
+                    rule={rule}
+                    language={language}
+                    forceExpanded={expandedArticle === rule.id}
+                    onExpand={() => setExpandedArticle(null)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 text-text-primary/30">
+                <BookOpen size={36} className="mx-auto mb-4 opacity-40" />
+                <p className="text-sm mb-3">
+                  {isRtl
+                    ? "لم يتم العثور على مواد تطابق معاييرك."
+                    : "No articles found matching your criteria."}
+                </p>
+                <button
+                  onClick={handleBackToCategories}
+                  className={cn(
+                    "text-sm font-medium text-brand-dark bg-brand/20 px-5 py-2",
+                    "rounded-[1.5rem] hover:rounded-[0.5rem] hover:bg-brand/30",
+                    "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]"
+                  )}
+                >
+                  {isRtl ? "العودة للفئات" : "Back to categories"}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
   )
 }
-
-/* ============ Category Card Component ============ */
 
 function CategoryCard({
   category,
@@ -325,7 +302,6 @@ function CategoryCard({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Stagger the reveal based on index
           setTimeout(() => setVisible(true), index * 60)
           observer.disconnect()
         }

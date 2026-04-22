@@ -29,7 +29,7 @@ export default function RootLayout({
         <LanguageProvider>
           <MobileMenuProvider>
             <RtlWrapper>
-              <div className="h-screen flex flex-col overflow-hidden">
+              <div className="min-h-screen flex flex-col">
                 <DisclaimerBanner />
                 <Header />
                 <ContentLayout>
