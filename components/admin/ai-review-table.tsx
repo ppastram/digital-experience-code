@@ -1,6 +1,8 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/lib/language-context"
+import { t } from "@/data/admin-translations"
 import type { MockAIReview } from "@/data/admin-mock-data"
 
 const STATUS_STYLES: Record<string, string> = {
@@ -17,7 +19,17 @@ interface AIReviewTableProps {
   onStatusFilterChange: (status: string) => void
 }
 
+const FILTER_KEYS: Record<string, string> = {
+  all: "all",
+  Open: "open",
+  Resolved: "resolved",
+  Dismissed: "dismissed",
+}
+
 export function AIReviewTable({ reviews, onSelect, selectedId, statusFilter, onStatusFilterChange }: AIReviewTableProps) {
+  const { lang } = useLanguage()
+  const ar = lang === "ar"
+
   const filtered = statusFilter === "all"
     ? reviews
     : reviews.filter((r) => r.status === statusFilter)
@@ -36,7 +48,7 @@ export function AIReviewTable({ reviews, onSelect, selectedId, statusFilter, onS
                 : "bg-cream text-text-primary/40 hover:bg-brand/10"
             )}
           >
-            {s === "all" ? "All" : s}
+            {ar ? t(FILTER_KEYS[s], lang) : (s === "all" ? "All" : s)}
             {s !== "all" && (
               <span className="ml-1 opacity-60">
                 ({reviews.filter((r) => r.status === s).length})
@@ -50,10 +62,10 @@ export function AIReviewTable({ reviews, onSelect, selectedId, statusFilter, onS
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-page-bg">
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">Query</th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">Flag Reason</th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">Status</th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">Date</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">{ar ? t("query", lang) : "Query"}</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">{ar ? t("flag_reason", lang) : "Flag Reason"}</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">{ar ? t("status", lang) : "Status"}</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">{ar ? t("date", lang) : "Date"}</th>
             </tr>
           </thead>
           <tbody>

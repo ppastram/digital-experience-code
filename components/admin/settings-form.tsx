@@ -1,36 +1,41 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/lib/language-context"
+import { t } from "@/data/admin-translations"
 
 export function SettingsForm() {
+  const { lang } = useLanguage()
+  const ar = lang === "ar"
+
   return (
     <div className="space-y-6">
       {/* General */}
-      <SettingsCard title="General">
-        <FieldGroup label="Platform Name">
+      <SettingsCard title={ar ? t("general", lang) : "General"}>
+        <FieldGroup label={ar ? t("platform_name", lang) : "Platform Name"}>
           <input
             type="text"
             defaultValue="Emirates Code — Digital Experience"
             className="w-full text-sm bg-page-bg border-0 rounded-[12px] px-4 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/30"
           />
         </FieldGroup>
-        <FieldGroup label="Default Language">
+        <FieldGroup label={ar ? t("default_language", lang) : "Default Language"}>
           <select
             defaultValue="en"
             className="w-full text-sm bg-page-bg border-0 rounded-[12px] px-4 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/30"
           >
-            <option value="en">English</option>
-            <option value="ar">Arabic</option>
+            <option value="en">{ar ? t("english", lang) : "English"}</option>
+            <option value="ar">{ar ? t("arabic", lang) : "Arabic"}</option>
           </select>
         </FieldGroup>
-        <FieldGroup label="Show Disclaimer Banner">
+        <FieldGroup label={ar ? t("show_disclaimer_banner", lang) : "Show Disclaimer Banner"}>
           <Toggle defaultChecked />
         </FieldGroup>
       </SettingsCard>
 
       {/* AI Configuration */}
-      <SettingsCard title="AI Configuration">
-        <FieldGroup label="AI Model">
+      <SettingsCard title={ar ? t("ai_configuration", lang) : "AI Configuration"}>
+        <FieldGroup label={ar ? t("ai_model", lang) : "AI Model"}>
           <select
             defaultValue="claude-sonnet"
             className="w-full text-sm bg-page-bg border-0 rounded-[12px] px-4 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/30"
@@ -39,13 +44,13 @@ export function SettingsForm() {
             <option value="claude-haiku">Claude Haiku 4.5</option>
           </select>
         </FieldGroup>
-        <FieldGroup label="Enable AI Chat">
+        <FieldGroup label={ar ? t("enable_ai_chat", lang) : "Enable AI Chat"}>
           <Toggle defaultChecked />
         </FieldGroup>
-        <FieldGroup label="Auto-flag Sensitive Topics">
+        <FieldGroup label={ar ? t("auto_flag_sensitive", lang) : "Auto-flag Sensitive Topics"}>
           <Toggle defaultChecked />
         </FieldGroup>
-        <FieldGroup label="Max Tokens per Response">
+        <FieldGroup label={ar ? t("max_tokens", lang) : "Max Tokens per Response"}>
           <input
             type="number"
             defaultValue={2048}
@@ -55,28 +60,28 @@ export function SettingsForm() {
       </SettingsCard>
 
       {/* Notifications */}
-      <SettingsCard title="Notifications">
-        <FieldGroup label="Email Notifications">
+      <SettingsCard title={ar ? t("notifications", lang) : "Notifications"}>
+        <FieldGroup label={ar ? t("email_notifications", lang) : "Email Notifications"}>
           <Toggle defaultChecked />
         </FieldGroup>
-        <FieldGroup label="Notify on New AI Flags">
+        <FieldGroup label={ar ? t("notify_ai_flags", lang) : "Notify on New AI Flags"}>
           <Toggle defaultChecked />
         </FieldGroup>
-        <FieldGroup label="Weekly Analytics Digest">
+        <FieldGroup label={ar ? t("weekly_digest", lang) : "Weekly Analytics Digest"}>
           <Toggle />
         </FieldGroup>
       </SettingsCard>
 
       {/* Access */}
-      <SettingsCard title="Access Control">
-        <FieldGroup label="Admin Email">
+      <SettingsCard title={ar ? t("access_control", lang) : "Access Control"}>
+        <FieldGroup label={ar ? t("admin_email", lang) : "Admin Email"}>
           <input
             type="email"
             defaultValue="admin@egsep.gov.ae"
             className="w-full text-sm bg-page-bg border-0 rounded-[12px] px-4 py-2.5 text-text-primary focus:outline-none focus:ring-2 focus:ring-brand/30"
           />
         </FieldGroup>
-        <FieldGroup label="Require Authentication">
+        <FieldGroup label={ar ? t("require_auth", lang) : "Require Authentication"}>
           <Toggle />
         </FieldGroup>
       </SettingsCard>
@@ -90,7 +95,7 @@ export function SettingsForm() {
             "transition-all duration-[400ms] ease-[cubic-bezier(0.47,1.64,0.38,0.87)]"
           )}
         >
-          Save Changes
+          {ar ? t("save_changes", lang) : "Save Changes"}
         </button>
       </div>
     </div>

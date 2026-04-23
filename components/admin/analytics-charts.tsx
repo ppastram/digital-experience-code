@@ -12,6 +12,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
+import { useLanguage } from "@/lib/language-context"
+import { t } from "@/data/admin-translations"
 import type { MockAnalytics } from "@/data/admin-mock-data"
 
 interface AnalyticsChartsProps {
@@ -19,10 +21,13 @@ interface AnalyticsChartsProps {
 }
 
 export function AnalyticsCharts({ analytics }: AnalyticsChartsProps) {
+  const { lang } = useLanguage()
+  const ar = lang === "ar"
+
   return (
     <div className="space-y-6">
       {/* Usage over time */}
-      <ChartCard title="Usage Over Time (30 Days)">
+      <ChartCard title={ar ? t("usage_over_time", lang) : "Usage Over Time (30 Days)"}>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={analytics.daily_usage}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E5" />
@@ -36,14 +41,14 @@ export function AnalyticsCharts({ analytics }: AnalyticsChartsProps) {
               contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", fontSize: 12 }}
             />
             <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Line type="monotone" dataKey="views" stroke="#FFBF36" strokeWidth={2} dot={false} name="Page Views" />
-            <Line type="monotone" dataKey="ai_queries" stroke="#773610" strokeWidth={2} dot={false} name="AI Queries" />
+            <Line type="monotone" dataKey="views" stroke="#FFBF36" strokeWidth={2} dot={false} name={ar ? t("page_views", lang) : "Page Views"} />
+            <Line type="monotone" dataKey="ai_queries" stroke="#773610" strokeWidth={2} dot={false} name={ar ? t("ai_queries", lang) : "AI Queries"} />
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
 
       {/* Domain access bar chart */}
-      <ChartCard title="Most Accessed Domains">
+      <ChartCard title={ar ? t("most_accessed_domains", lang) : "Most Accessed Domains"}>
         <ResponsiveContainer width="100%" height={360}>
           <BarChart data={analytics.domain_access} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E5" />
@@ -57,20 +62,20 @@ export function AnalyticsCharts({ analytics }: AnalyticsChartsProps) {
             <Tooltip
               contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", fontSize: 12 }}
             />
-            <Bar dataKey="count" fill="#FFBF36" radius={[0, 4, 4, 0]} name="Views" />
+            <Bar dataKey="count" fill="#FFBF36" radius={[0, 4, 4, 0]} name={ar ? t("views", lang) : "Views"} />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top search queries */}
-        <ChartCard title="Top Search Queries">
+        <ChartCard title={ar ? t("top_search_queries", lang) : "Top Search Queries"}>
           <div className="space-y-0">
             <div className="flex items-center justify-between px-1 pb-2 border-b border-page-bg">
-              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">Query</span>
+              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">{ar ? t("query", lang) : "Query"}</span>
               <div className="flex gap-8">
-                <span className="text-[10px] font-semibold text-text-primary/40 uppercase">Searches</span>
-                <span className="text-[10px] font-semibold text-text-primary/40 uppercase w-12 text-right">Results</span>
+                <span className="text-[10px] font-semibold text-text-primary/40 uppercase">{ar ? t("searches", lang) : "Searches"}</span>
+                <span className="text-[10px] font-semibold text-text-primary/40 uppercase w-12 text-right">{ar ? t("results", lang) : "Results"}</span>
               </div>
             </div>
             {analytics.top_searches.map((s) => (
@@ -86,11 +91,11 @@ export function AnalyticsCharts({ analytics }: AnalyticsChartsProps) {
         </ChartCard>
 
         {/* Zero-result searches */}
-        <ChartCard title="Zero-Result Searches">
+        <ChartCard title={ar ? t("zero_result_searches", lang) : "Zero-Result Searches"}>
           <div className="space-y-0">
             <div className="flex items-center justify-between px-1 pb-2 border-b border-page-bg">
-              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">Query</span>
-              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">Attempts</span>
+              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">{ar ? t("query", lang) : "Query"}</span>
+              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">{ar ? t("attempts", lang) : "Attempts"}</span>
             </div>
             {analytics.zero_result_searches.map((s) => (
               <div key={s.query} className="flex items-center justify-between px-1 py-2.5 border-b border-page-bg/50">
@@ -100,13 +105,13 @@ export function AnalyticsCharts({ analytics }: AnalyticsChartsProps) {
             ))}
           </div>
           <p className="text-[10px] text-text-primary/25 mt-3">
-            These queries indicate content gaps. Consider adding relevant articles.
+            {ar ? t("content_gaps_hint", lang) : "These queries indicate content gaps. Consider adding relevant articles."}
           </p>
         </ChartCard>
       </div>
 
       {/* AI Satisfaction */}
-      <ChartCard title="AI Chat Satisfaction (30 Days)">
+      <ChartCard title={ar ? t("ai_chat_satisfaction", lang) : "AI Chat Satisfaction (30 Days)"}>
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={analytics.ai_satisfaction}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E5" />
@@ -120,33 +125,33 @@ export function AnalyticsCharts({ analytics }: AnalyticsChartsProps) {
               contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.1)", fontSize: 12 }}
             />
             <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Line type="monotone" dataKey="positive" stroke="#22c55e" strokeWidth={2} dot={false} name="Positive" />
-            <Line type="monotone" dataKey="negative" stroke="#ef4444" strokeWidth={2} dot={false} name="Negative" />
+            <Line type="monotone" dataKey="positive" stroke="#22c55e" strokeWidth={2} dot={false} name={ar ? t("positive", lang) : "Positive"} />
+            <Line type="monotone" dataKey="negative" stroke="#ef4444" strokeWidth={2} dot={false} name={ar ? t("negative", lang) : "Negative"} />
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
 
       {/* Flagged topics */}
-      <ChartCard title="Most Flagged Topics">
+      <ChartCard title={ar ? t("most_flagged_topics", lang) : "Most Flagged Topics"}>
         <div className="space-y-0">
           <div className="flex items-center justify-between px-1 pb-2 border-b border-page-bg">
-            <span className="text-[10px] font-semibold text-text-primary/40 uppercase">Topic</span>
+            <span className="text-[10px] font-semibold text-text-primary/40 uppercase">{ar ? t("topic", lang) : "Topic"}</span>
             <div className="flex gap-8">
-              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">Flags</span>
-              <span className="text-[10px] font-semibold text-text-primary/40 uppercase w-16 text-right">Severity</span>
+              <span className="text-[10px] font-semibold text-text-primary/40 uppercase">{ar ? t("flags", lang) : "Flags"}</span>
+              <span className="text-[10px] font-semibold text-text-primary/40 uppercase w-16 text-right">{ar ? t("severity", lang) : "Severity"}</span>
             </div>
           </div>
-          {analytics.flagged_topics.map((t) => (
-            <div key={t.topic} className="flex items-center justify-between px-1 py-2.5 border-b border-page-bg/50">
-              <span className="text-sm text-text-primary/60">{t.topic}</span>
+          {analytics.flagged_topics.map((ft) => (
+            <div key={ft.topic} className="flex items-center justify-between px-1 py-2.5 border-b border-page-bg/50">
+              <span className="text-sm text-text-primary/60">{ft.topic}</span>
               <div className="flex gap-8 items-center">
-                <span className="text-sm font-medium text-text-primary/70">{t.count}</span>
+                <span className="text-sm font-medium text-text-primary/70">{ft.count}</span>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full w-16 text-center ${
-                  t.severity === "high" ? "bg-red-50 text-red-600" :
-                  t.severity === "medium" ? "bg-amber-50 text-amber-600" :
+                  ft.severity === "high" ? "bg-red-50 text-red-600" :
+                  ft.severity === "medium" ? "bg-amber-50 text-amber-600" :
                   "bg-gray-100 text-gray-500"
                 }`}>
-                  {t.severity}
+                  {ft.severity}
                 </span>
               </div>
             </div>

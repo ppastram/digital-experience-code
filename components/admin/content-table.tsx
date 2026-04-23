@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/lib/language-context"
+import { t } from "@/data/admin-translations"
 import type { MockArticle, ArticleStatus } from "@/data/admin-mock-data"
 
 const STATUS_STYLES: Record<ArticleStatus, string> = {
@@ -20,6 +22,8 @@ interface ContentTableProps {
 export function ContentTable({ articles, onSelect, selectedId }: ContentTableProps) {
   const [domainFilter, setDomainFilter] = useState<string>("all")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const { lang } = useLanguage()
+  const ar = lang === "ar"
 
   const domains = Array.from(new Set(articles.map((a) => a.domain))).sort()
   const statuses: ArticleStatus[] = ["Draft", "In Review", "Approved", "Published"]
@@ -39,7 +43,7 @@ export function ContentTable({ articles, onSelect, selectedId }: ContentTablePro
           onChange={(e) => setDomainFilter(e.target.value)}
           className="text-xs bg-white border border-uae-gray-100 rounded-lg px-3 py-2 text-text-primary/60 focus:outline-none focus:ring-2 focus:ring-brand/30"
         >
-          <option value="all">All Domains</option>
+          <option value="all">{ar ? t("all_domains", lang) : "All Domains"}</option>
           {domains.map((d) => (
             <option key={d} value={d}>{d}</option>
           ))}
@@ -49,7 +53,7 @@ export function ContentTable({ articles, onSelect, selectedId }: ContentTablePro
           onChange={(e) => setStatusFilter(e.target.value)}
           className="text-xs bg-white border border-uae-gray-100 rounded-lg px-3 py-2 text-text-primary/60 focus:outline-none focus:ring-2 focus:ring-brand/30"
         >
-          <option value="all">All Statuses</option>
+          <option value="all">{ar ? t("all_statuses", lang) : "All Statuses"}</option>
           {statuses.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
@@ -61,11 +65,11 @@ export function ContentTable({ articles, onSelect, selectedId }: ContentTablePro
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-page-bg">
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">Article</th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">Domain</th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">Status</th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden lg:table-cell">Author</th>
-              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">Modified</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">{ar ? t("article", lang) : "Article"}</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">{ar ? t("domain", lang) : "Domain"}</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">{ar ? t("status", lang) : "Status"}</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden lg:table-cell">{ar ? t("author", lang) : "Author"}</th>
+              <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">{ar ? t("modified", lang) : "Modified"}</th>
             </tr>
           </thead>
           <tbody>

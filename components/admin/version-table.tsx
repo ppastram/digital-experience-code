@@ -1,6 +1,8 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/lib/language-context"
+import { t } from "@/data/admin-translations"
 import type { MockVersion } from "@/data/admin-mock-data"
 
 const CHANGE_TYPE_STYLES: Record<string, string> = {
@@ -18,15 +20,18 @@ interface VersionTableProps {
 }
 
 export function VersionTable({ versions, onSelect, selectedId }: VersionTableProps) {
+  const { lang } = useLanguage()
+  const ar = lang === "ar"
+
   return (
     <div className="bg-white rounded-[18px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-page-bg">
-            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">Date</th>
-            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">Article</th>
-            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">Change Type</th>
-            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden lg:table-cell">Author</th>
+            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">{ar ? t("date", lang) : "Date"}</th>
+            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40">{ar ? t("article", lang) : "Article"}</th>
+            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden md:table-cell">{ar ? t("change_type", lang) : "Change Type"}</th>
+            <th className="text-left px-5 py-3 text-xs font-semibold text-text-primary/40 hidden lg:table-cell">{ar ? t("author", lang) : "Author"}</th>
           </tr>
         </thead>
         <tbody>

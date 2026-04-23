@@ -78,7 +78,7 @@ export function Header() {
             )}
           >
             <Shield size={12} />
-            Admin
+            {lang === "ar" ? "المشرف" : "Admin"}
           </Link>
         </nav>
 
@@ -128,7 +128,7 @@ export function Header() {
               className="px-6 py-3 text-xs font-medium text-text-primary/30 hover:text-text-primary/50 flex items-center gap-1.5"
             >
               <Shield size={12} />
-              Admin Console
+              {lang === "ar" ? "لوحة المشرف" : "Admin Console"}
             </Link>
           </nav>
         </div>
