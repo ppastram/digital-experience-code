@@ -19,6 +19,13 @@ interface ContentTableProps {
   selectedId: string | null
 }
 
+const STATUS_LABELS: Record<ArticleStatus, string> = {
+  Draft: "status_draft",
+  "In Review": "status_in_review",
+  Approved: "status_approved",
+  Published: "status_published",
+}
+
 export function ContentTable({ articles, onSelect, selectedId }: ContentTableProps) {
   const [domainFilter, setDomainFilter] = useState<string>("all")
   const [statusFilter, setStatusFilter] = useState<string>("all")
@@ -55,7 +62,7 @@ export function ContentTable({ articles, onSelect, selectedId }: ContentTablePro
         >
           <option value="all">{ar ? t("all_statuses", lang) : "All Statuses"}</option>
           {statuses.map((s) => (
-            <option key={s} value={s}>{s}</option>
+            <option key={s} value={s}>{ar ? t(STATUS_LABELS[s], lang) : s}</option>
           ))}
         </select>
       </div>
@@ -93,7 +100,7 @@ export function ContentTable({ articles, onSelect, selectedId }: ContentTablePro
                 <td className="px-5 py-3.5 text-text-primary/50 hidden md:table-cell">{article.domain}</td>
                 <td className="px-5 py-3.5">
                   <span className={cn("text-[10px] font-semibold px-2.5 py-1 rounded-full", STATUS_STYLES[article.status])}>
-                    {article.status}
+                    {ar ? t(STATUS_LABELS[article.status], lang) : article.status}
                   </span>
                 </td>
                 <td className="px-5 py-3.5 text-text-primary/40 hidden lg:table-cell">{article.author}</td>

@@ -101,6 +101,24 @@ const translations: Record<string, string> = {
   "version_history": "سجل الإصدارات",
   "track_all_changes": "تتبع جميع التغييرات على مقالات ميثاق الإمارات",
 
+  // Status badges (content table)
+  "status_draft": "مسودة",
+  "status_in_review": "قيد المراجعة",
+  "status_approved": "تمت الموافقة",
+  "status_published": "منشور",
+
+  // Status badges (AI review)
+  "status_open": "مفتوح",
+  "status_resolved": "تم الحل",
+  "status_dismissed": "مرفوض",
+
+  // Change type badges (version table)
+  "change_content_update": "تحديث المحتوى",
+  "change_new_article": "مقال جديد",
+  "change_requirement_added": "إضافة متطلب",
+  "change_structural_change": "تغيير هيكلي",
+  "change_correction": "تصحيح",
+
   // Version table
   "change_type": "نوع التغيير",
 

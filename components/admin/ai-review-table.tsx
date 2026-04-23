@@ -26,6 +26,12 @@ const FILTER_KEYS: Record<string, string> = {
   Dismissed: "dismissed",
 }
 
+const STATUS_LABEL_KEYS: Record<string, string> = {
+  Open: "status_open",
+  Resolved: "status_resolved",
+  Dismissed: "status_dismissed",
+}
+
 export function AIReviewTable({ reviews, onSelect, selectedId, statusFilter, onStatusFilterChange }: AIReviewTableProps) {
   const { lang } = useLanguage()
   const ar = lang === "ar"
@@ -84,7 +90,7 @@ export function AIReviewTable({ reviews, onSelect, selectedId, statusFilter, onS
                 <td className="px-5 py-3.5 text-text-primary/45 text-xs hidden md:table-cell max-w-[250px] truncate">{review.flag_reason}</td>
                 <td className="px-5 py-3.5">
                   <span className={cn("text-[10px] font-semibold px-2.5 py-1 rounded-full", STATUS_STYLES[review.status])}>
-                    {review.status}
+                    {ar ? t(STATUS_LABEL_KEYS[review.status], lang) : review.status}
                   </span>
                 </td>
                 <td className="px-5 py-3.5 text-text-primary/30 hidden md:table-cell">{review.date}</td>

@@ -13,6 +13,14 @@ const CHANGE_TYPE_STYLES: Record<string, string> = {
   Correction: "bg-gray-100 text-gray-600",
 }
 
+const CHANGE_TYPE_KEYS: Record<string, string> = {
+  "Content Update": "change_content_update",
+  "New Article": "change_new_article",
+  "Requirement Added": "change_requirement_added",
+  "Structural Change": "change_structural_change",
+  Correction: "change_correction",
+}
+
 interface VersionTableProps {
   versions: MockVersion[]
   onSelect: (version: MockVersion) => void
@@ -53,7 +61,7 @@ export function VersionTable({ versions, onSelect, selectedId }: VersionTablePro
               </td>
               <td className="px-5 py-3.5 hidden md:table-cell">
                 <span className={cn("text-[10px] font-semibold px-2.5 py-1 rounded-full", CHANGE_TYPE_STYLES[version.change_type] ?? "bg-gray-100 text-gray-600")}>
-                  {version.change_type}
+                  {ar ? t(CHANGE_TYPE_KEYS[version.change_type] ?? version.change_type, lang) : version.change_type}
                 </span>
               </td>
               <td className="px-5 py-3.5 text-text-primary/40 hidden lg:table-cell">{version.author}</td>

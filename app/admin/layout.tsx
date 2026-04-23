@@ -11,8 +11,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { lang, isRtl } = useLanguage()
 
   return (
-    <div className={`flex flex-1 min-h-0 ${isRtl ? "flex-row-reverse" : ""}`}>
-      <AdminSidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+    <div className="flex flex-1 min-h-0">
+      {!isRtl && <AdminSidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />}
       <div className="flex-1 flex flex-col min-h-0 overflow-auto bg-page-bg">
         <div className="md:hidden flex items-center gap-2 px-4 py-3 border-b border-uae-gray-100 bg-white">
           <button
@@ -27,6 +27,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {children}
         </main>
       </div>
+      {isRtl && <AdminSidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />}
     </div>
   )
 }
