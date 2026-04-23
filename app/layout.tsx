@@ -1,12 +1,11 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
 import { LanguageProvider } from "@/lib/language-context"
 import { MobileMenuProvider } from "@/lib/mobile-menu-context"
 import { DisclaimerBanner } from "@/components/layout/disclaimer-banner"
 import { Header } from "@/components/layout/header"
 import { RtlWrapper } from "@/components/layout/rtl-wrapper"
 import { ContentLayout } from "@/components/layout/content-layout"
-import { PostHogProvider, PostHogPageView } from "@/components/layout/posthog-provider"
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -28,8 +27,6 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <PostHogProvider>
-        <Suspense fallback={null}><PostHogPageView /></Suspense>
         <LanguageProvider>
           <MobileMenuProvider>
             <RtlWrapper>
@@ -43,7 +40,7 @@ export default function RootLayout({
             </RtlWrapper>
           </MobileMenuProvider>
         </LanguageProvider>
-        </PostHogProvider>
+        <Analytics />
       </body>
     </html>
   )

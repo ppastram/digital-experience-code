@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { UIRule } from "@/lib/emirates-code-data"
-import { trackArticleView } from "@/lib/posthog"
 import { CategoryIcon } from "./category-icons"
 
 interface ArticleCardProps {
@@ -69,7 +68,7 @@ export function ArticleCard({ rule, language, forceExpanded, onExpand }: Article
       }}
     >
       <button
-        onClick={() => { if (!expanded) trackArticleView(rule.id, rule.category); setExpanded(!expanded) }}
+        onClick={() => setExpanded(!expanded)}
         className="w-full text-left p-5 group"
         dir={isRtl ? "rtl" : "ltr"}
       >

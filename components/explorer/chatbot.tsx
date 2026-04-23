@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import { Send, Loader2, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { trackChatMessage } from "@/lib/posthog"
 import { type ArticleClickHandler } from "./markdown-renderer"
 import { AssistantMessage } from "./assistant-message"
 
@@ -70,7 +69,6 @@ export function Chatbot({ language, onArticleClick, fullHeight }: ChatbotProps) 
     setMessages(newMessages)
     setInput("")
     setLoading(true)
-    trackChatMessage(text.trim().length, language)
 
     // Reset textarea height
     if (textareaRef.current) {

@@ -8,7 +8,6 @@ import { getRules, getCategories, type UICategory } from "@/lib/emirates-code-da
 import { ArticleCard } from "@/components/explorer/article-card"
 import { CategoryIcon } from "@/components/explorer/category-icons"
 import { useLanguage } from "@/lib/language-context"
-import { trackSearch, trackCategorySelect, trackArticleView } from "@/lib/posthog"
 import Link from "next/link"
 
 export default function ExplorerPage() {
@@ -88,19 +87,7 @@ function ExplorerContent() {
     return () => observer.disconnect()
   }, [])
 
-  // Track searches with debounce
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  useEffect(() => {
-    if (!search.trim()) return
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
-    searchTimerRef.current = setTimeout(() => {
-      trackSearch(search.trim(), filteredRules.length)
-    }, 1000)
-    return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current) }
-  }, [search, filteredRules.length])
-
   const handleCategorySelect = (categoryName: string) => {
-    trackCategorySelect(categoryName)
     setSelectedCategory(categoryName)
     setSearch("")
     setExpandedArticle(null)
